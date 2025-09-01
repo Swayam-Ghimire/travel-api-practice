@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Role;
 use App\Models\Travel;
+use App\Models\User;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use Tests\TestCase;
@@ -28,4 +31,22 @@ class TravelListTest extends TestCase
         $response->assertJsonCount(1, 'data');
         $response->assertJsonPath('data.0.name', $publicTravel->name);
     }
+public function test_non_admin_users_cannot_add_travels(): void {
+    $this->seed(RoleSeeder::class);
+
+    $user = User::factory()->create();
+    $user->roles()->attach(Role::where('name', 'editor')->value('id'));
+
+    $payload = [
+        'is_public' => true,
+        'name' => 'Test Travel',
+        'description' => 'A test travel package',
+        'number_of_days' => 5,
+    ];
+
+    $response = $this->actingAs($user)->postJson('/api/v1/admin/travels', $payload);
+
+    $response->assertStatus(403); // now should pass
+}
+
 }
