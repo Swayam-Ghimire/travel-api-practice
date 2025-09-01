@@ -41,6 +41,11 @@ This API uses **token-based authentication** powered by Laravel Sanctum.
 - `POST /api/v1/admin/travels`  
   Create a new travel.
 
+- `Create New User`
+  ```
+  php artisan create:users
+  ```
+
 - `POST /api/v1/admin/travels/tours/{travel:slug}`
   Create tours for travel by travel slug.
 
